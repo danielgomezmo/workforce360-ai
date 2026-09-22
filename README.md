@@ -1,106 +1,76 @@
-# Workforce360 AI · Fase 3.2 corregida
+# Workforce360 AI
 
-Esta versión mantiene las Fases 1, 2 y 3 y corrige el flujo de acceso del **COLABORADOR** para que pueda iniciar sesión y registrar su propia asistencia.
+Workforce360 AI es un proyecto que estoy desarrollando como parte de mis prácticas.
 
-## Corrección v3.2 — PDO HY093
+La idea del sistema es llevar un mejor control de la asistencia de los colaboradores, permitiendo registrar ingresos, salidas, horarios, tardanzas e incidencias laborales.
 
-Se corrigió el uso repetido de placeholders nombrados en consultas preparadas con PDO nativo (`ATTR_EMULATE_PREPARES = false`).
+El proyecto se está desarrollando por fases para ir implementando y probando cada módulo antes de continuar con el siguiente.
 
-Afectaba principalmente a `Marcacion::scheduleForDate()` al abrir **Mi asistencia** y podía afectar posteriormente las búsquedas de colaboradores y marcaciones.
+## Tecnologías utilizadas
 
-**No requiere migración de base de datos.** Basta con reemplazar los archivos del proyecto por esta versión.
+- PHP 8
+- MySQL
+- HTML
+- CSS
+- JavaScript
+- Bootstrap 5
+- XAMPP
 
+## Funcionalidades desarrolladas hasta el momento
 
-## Corrección principal de la v3.1
+Actualmente el sistema cuenta con:
 
-En la versión anterior, el CRUD podía registrar un colaborador laboral sin crearle necesariamente una cuenta en `usuarios`. Eso hacía que un trabajador existiera en la base de datos, pero no tuviera credenciales vinculadas para entrar a `Mi asistencia`.
+- Inicio y cierre de sesión.
+- Roles de usuario.
+- Gestión de colaboradores.
+- Gestión de áreas.
+- Gestión de horarios.
+- Registro de ingreso y salida.
+- Detección de tardanzas.
+- Detección de salidas anticipadas.
+- Historial de asistencia del colaborador.
+- Solicitudes de incidencias.
+- Vacaciones.
+- Permisos.
+- Licencias.
+- Descansos médicos.
+- Aprobación y rechazo de solicitudes.
+- Auditoría básica de las operaciones.
 
-Ahora:
+## Roles del sistema
 
-- Cada colaborador puede tener usuario de acceso vinculado desde su mismo formulario.
-- Al registrar un colaborador nuevo se solicita `usuario + contraseña`.
-- La cuenta recibe automáticamente el rol `COLABORADOR`.
-- Al editar un colaborador existente sin cuenta, se puede crear su acceso.
-- Si ya tiene cuenta, la contraseña puede dejarse vacía para conservarla.
-- El listado de colaboradores muestra si el acceso está Activo, Desactivado o Sin acceso.
-- Un COLABORADOR vinculado entra directamente a `Mi asistencia` después del login.
-- `Mi asistencia` sigue validando estado ACTIVO, horario vigente, día laborable y cese.
+El sistema contempla los siguientes roles:
 
-## Si YA tienes instalada la Fase 3
+- Administrador
+- Recursos Humanos
+- Supervisor
+- Colaborador
+- Gerencia
 
-1. Haz una copia de seguridad de la base de datos.
-2. Reemplaza la carpeta `C:\xampp\htdocs\Workforce360AI` con la incluida en este ZIP.
-3. En phpMyAdmin selecciona la base `workforce360_ai`.
-4. Ejecuta **una sola vez**:
+Cada usuario tiene acceso a diferentes opciones dependiendo de su rol.
 
-`database/migrations/fase3_1_corregir_acceso_colaborador.sql`
+## Estado actual
 
-5. Al final del script debe aparecer una fila de diagnóstico para el usuario `colaborador`, con `id_colaborador` y horario.
-6. Cierra cualquier sesión abierta del sistema y vuelve a iniciar sesión.
+El proyecto se encuentra desarrollado hasta la Fase 4.
 
-## Instalación nueva
+En las siguientes fases se implementarán dashboards, indicadores, reportes y posteriormente el módulo de Inteligencia Artificial.
 
-1. Copia `Workforce360AI` a `C:\xampp\htdocs\`.
-2. Inicia Apache y MySQL.
-3. Importa `database/workforce360_v3_1.sql`.
-4. Abre `http://localhost/Workforce360AI/`.
+## Ejecución del proyecto
 
-## Credenciales de comprobación
+El proyecto se ejecuta de manera local utilizando XAMPP.
 
-### Administrador
-- Usuario: `admin`
-- Contraseña: `Admin123*`
+La carpeta del proyecto debe colocarse dentro de:
 
-### Colaborador demo
-- Usuario: `colaborador`
-- Contraseña: `Colab123*`
+C:\xampp\htdocs\Workforce360AI
 
-Con el colaborador demo, después del login debes entrar directamente a **Mi asistencia** y ver el botón `MARCAR INGRESO` si el estado, horario y día permiten iniciar jornada.
+Luego se debe iniciar Apache y MySQL desde XAMPP.
 
-## Crear un colaborador que pueda marcar
+La aplicación se puede abrir desde:
 
-Como administrador:
+http://localhost/Workforce360AI/
 
-1. Abre `Colaboradores`.
-2. Pulsa `Nuevo colaborador`.
-3. Completa identificación, área, horario, fecha de ingreso y estado `ACTIVO`.
-4. En **Acceso para marcar asistencia**, define un usuario y una contraseña de mínimo 8 caracteres.
-5. Deja activo `Permitir inicio de sesión y marcación`.
-6. Guarda.
-7. Cierra sesión del administrador.
-8. Entra con las credenciales que acabas de crear.
-9. El sistema debe abrir `Mi asistencia`.
+## Base de datos
 
-## Marcaciones incorporadas en Fase 3
+La base de datos utilizada es MySQL.
 
-- Ingreso y salida con hora del servidor.
-- Tolerancia configurable.
-- Puntualidad y tardanza automática.
-- Minutos de tardanza.
-- Salida anticipada.
-- Minutos trabajados.
-- Horarios que cruzan medianoche.
-- IP de entrada y salida.
-- Auditoría.
-- Bloqueo por cese/estado laboral.
-- Historial personal.
-- Supervisión de marcaciones para Administrador/RRHH/Supervisor.
-
-## Regla de ejemplo
-
-Horario 08:00 con 5 minutos de tolerancia:
-
-- 08:04 → PUNTUAL.
-- 08:05 → PUNTUAL.
-- 08:06 → TARDANZA.
-
-## Importante
-
-No avances todavía a Fase 4 hasta comprobar esta ruta:
-
-`Admin → crear/editar colaborador con acceso → cerrar sesión → login del colaborador → Mi asistencia → marcar ingreso`.
-
-
-## Fase 4
-
-Esta entrega incorpora el módulo de solicitudes/incidencias y corrige el panel del colaborador. Si vienes de Fase 3.3, ejecuta `database/migrations/fase4_desde_v3_3.sql` una sola vez. Para instalación limpia utiliza `database/workforce360_v4.sql`. Consulta `docs/FASE4.md`.
+Dentro de la carpeta `database` se encuentran los scripts necesarios para la instalación y las migraciones realizadas durante las diferentes fases del proyecto.
