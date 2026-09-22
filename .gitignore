@@ -1,0 +1,9 @@
+/.idea/
+/.vscode/
+/vendor/
+.env
+*.log
+.DS_Store
+Thumbs.db
+/public/uploads/*
+!/public/uploads/.gitkeep
