@@ -1,2 +1,4 @@
-Workforce360 AI - Fase 4 v4.0
-Correcciones UI colaborador + Historial + Solicitudes e Incidencias
+Workforce360 AI - Fase 6
+Centro de Reportes completo: asistencia, tardanzas, salidas anticipadas, incidencias y horas trabajadas.
+Exportación profesional a Excel (.xlsx), PDF e impresión.
+Auditoría avanzada: siguiente avance dentro de la Fase 6.

@@ -1,69 +1,62 @@
-# Plan incremental · Workforce360 AI
+# Plan incremental - Workforce360 AI
 
-## Fase 1 — Base del sistema ✅
+## Fase 1 - Base del sistema ✅
 - Arquitectura MVC.
-- Conexión PDO/MySQL.
+- MySQL/PDO.
 - Login, sesiones y roles.
-- CSRF y auditoría inicial.
-- Dashboard base.
+- Seguridad inicial.
 
-## Fase 2 — Maestros organizacionales ✅
-- CRUD de áreas.
-- CRUD de horarios.
-- CRUD de colaboradores.
-- Equipos y supervisor.
-- Asignación de horario base.
-- Ciclo de vida y estado laboral.
+## Fase 2 - Gestión organizacional ✅
+- Áreas.
+- Horarios.
+- Colaboradores.
+- Equipos, supervisor y horario base.
 
-## Fase 3 — Marcaciones y motor de reglas ✅ (revisión 3.1)
-- Marcación de entrada y salida.
-- Hora oficial del servidor.
-- IP de marcación.
-- Horario vigente y días laborables.
-- Tolerancia configurable.
+## Fase 3 - Marcaciones y reglas ✅
+- Ingreso y salida.
 - Puntualidad y tardanza.
 - Salida anticipada.
-- Minutos trabajados.
 - Turnos nocturnos.
-- Bloqueo por cese/estado.
-- Incidencias automáticas de tardanza y salida anticipada.
-- Panel personal e interfaz de supervisión.
-- Cuenta de acceso vinculada a cada colaborador desde el CRUD.
-- Rol COLABORADOR asignado automáticamente.
+- IP, historial y reglas de asistencia.
 
-## Fase 4 — Incidencias laborales ⏭️
-- CRUD/flujo de incidencias.
+## Fase 4 - Incidencias laborales ✅
 - Vacaciones.
-- Licencias con y sin goce.
+- Licencias.
 - Permisos.
 - Descansos médicos.
-- Descansos programados.
-- Justificación de faltas.
-- Validación/aprobación por Supervisor/RRHH.
-- Integración de incidencias con el estado diario de asistencia.
+- Solicitudes y aprobación/rechazo.
+- Integración con marcaciones.
 
-## Fase 5 — Inteligencia operativa
-- Dashboard operativo.
-- Dashboard gerencial.
+## Fase 5 - Dashboard Operativo y KPIs ✅
+- Personal programado, presente y ausente.
+- Tardanzas y salidas anticipadas.
 - Índice de asistencia.
-- Puntualidad y tardanza.
+- Índice de puntualidad.
 - Cumplimiento de jornada.
 - Absentismo.
-- Horas perdidas.
-- Disponibilidad laboral.
-- Reportes y exportación.
-- Auditoría avanzada.
+- Gráficos con Chart.js.
 
-## Fase 6 — Workforce AI
-- Servicio Python + FastAPI.
-- Dataset histórico preparado desde MySQL.
-- Predicción diaria de asistencia.
-- Predicción semanal de disponibilidad.
-- Pronóstico mensual de absentismo.
-- Tendencias y alertas de cobertura.
-- Integración REST con PHP.
+## Fase 6 - Reportes y Auditoría 🚧
+### Reportes completados ✅
+- Centro de Reportes.
+- Reporte de Asistencia.
+- Reporte de Tardanzas.
+- Reporte de Salidas Anticipadas.
+- Reporte de Incidencias.
+- Reporte de Horas Trabajadas.
+- Filtros por periodo, colaborador, área y estado según reporte.
+- Resumen de indicadores.
+- Exportación Excel (.xlsx).
+- Exportación PDF.
+- Diseño profesional para impresión.
 
+### Siguiente dentro de la misma fase
+- Auditoría avanzada y trazabilidad.
 
-## Estado de la Fase 4
-
-Implementada en esta versión: solicitudes de vacaciones, licencias, permisos, descansos médicos y faltas justificadas; revisión por roles; integración con marcación; historial personal y ajustes de interfaz del colaborador.
+## Fase 7 - Workforce AI
+- Python + FastAPI.
+- Preparación de dataset histórico.
+- Predicción de asistencia.
+- Pronóstico de disponibilidad.
+- Pronóstico de absentismo.
+- Tendencias y alertas.

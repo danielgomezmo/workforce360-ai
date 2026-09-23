@@ -1,0 +1,15 @@
+WORKFORCE360 AI - FASE 6 / CENTRO DE REPORTES COMPLETO
+
+Si ya tienes instalada la Fase 5 o el primer avance de Reportes:
+
+1. NO borres tu base de datos MySQL.
+2. NO elimines la carpeta oculta .git de tu proyecto actual.
+3. Haz una copia de seguridad de C:\xampp\htdocs\Workforce360AI.
+4. Extrae este ZIP en otra carpeta temporal.
+5. Copia el contenido de la nueva carpeta Workforce360AI encima de C:\xampp\htdocs\Workforce360AI.
+6. Acepta reemplazar los archivos cuando Windows lo solicite.
+7. No necesitas ejecutar scripts SQL ni migraciones nuevas.
+8. Abre el sistema y presiona Ctrl + F5 para limpiar la caché.
+9. Prueba todos los reportes y las exportaciones antes de hacer commit.
+
+Git detectará únicamente los archivos agregados/modificados respecto a tu último commit, siempre que conserves la carpeta .git existente.

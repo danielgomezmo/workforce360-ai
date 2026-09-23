@@ -7,6 +7,7 @@ $success = flash('success');
 $error = flash('error');
 $canManage = $user && Auth::hasAnyRole(['ADMINISTRADOR', 'RRHH']);
 $canViewMarks = $user && Auth::hasAnyRole(['ADMINISTRADOR', 'RRHH', 'SUPERVISOR']);
+$canViewReports = $user && Auth::hasAnyRole(['ADMINISTRADOR', 'RRHH', 'SUPERVISOR', 'GERENCIA']);
 $hasLinkedCollaborator = $user && Auth::collaboratorId() !== null;
 $canUsePersonalAttendance = $user && (Auth::hasRole('COLABORADOR') || $hasLinkedCollaborator);
 $isCollaboratorPanel = $user
@@ -114,6 +115,11 @@ $roleLabel = $isCollaboratorPanel ? 'Mi Perfil' : (Auth::hasRole('ADMINISTRADOR'
                             <i class="fa-solid fa-calendar-days"></i><span class="link-text">Horarios</span>
                         </a>
                     <?php endif; ?>
+                    <?php if ($canViewReports): ?>
+                        <a class="nav-link-custom <?= str_starts_with($currentRoute, 'reportes') ? 'active' : '' ?>" href="<?= e(route_url('reportes')) ?>" title="Reportes">
+                            <i class="fa-solid fa-file-lines"></i><span class="link-text">Reportes</span>
+                        </a>
+                    <?php endif; ?>
                     <?php if ($canUsePersonalAttendance): ?>
                         <a class="nav-link-custom <?= $currentRoute === 'mi-asistencia' ? 'active' : '' ?>" href="<?= e(route_url('mi-asistencia')) ?>" title="Mi asistencia">
                             <i class="fa-solid fa-fingerprint"></i><span class="link-text">Mi asistencia</span>
@@ -123,7 +129,7 @@ $roleLabel = $isCollaboratorPanel ? 'Mi Perfil' : (Auth::hasRole('ADMINISTRADOR'
 
                 <div class="sidebar-heading">SISTEMA</div>
                 <div class="sidebar-version">
-                    <i class="fa-solid fa-shield-halved"></i><span class="link-text">Workforce360 AI · Fase 5</span>
+                    <i class="fa-solid fa-shield-halved"></i><span class="link-text">Workforce360 AI · Fase 6</span>
                 </div>
             <?php endif; ?>
         </aside>

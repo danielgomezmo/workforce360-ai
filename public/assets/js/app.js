@@ -35,123 +35,51 @@
         window.setInterval(render, 1000);
     }
 
-    const attendanceChart =
-        document.getElementById('attendanceChart');
 
-    if (
-        attendanceChart &&
-        typeof Chart !== 'undefined'
-    ) {
-
+    const attendanceChart = document.getElementById('attendanceChart');
+    if (attendanceChart && typeof Chart !== 'undefined') {
         new Chart(attendanceChart, {
-
             type: 'doughnut',
-
             data: {
-
-                labels: [
-                    'Presentes',
-                    'Ausentes'
-                ],
-
+                labels: ['Presentes', 'Ausentes'],
                 datasets: [{
                     data: [
-                        Number(
-                            attendanceChart.dataset.presentes || 0
-                        ),
-                        Number(
-                            attendanceChart.dataset.ausentes || 0
-                        )
+                        Number(attendanceChart.dataset.presentes || 0),
+                        Number(attendanceChart.dataset.ausentes || 0)
                     ],
-
-                    backgroundColor: [
-                        '#22ae49',
-                        '#e93343'
-                    ],
-
+                    backgroundColor: ['#198754', '#dc3545'],
                     borderWidth: 0
                 }]
             },
-
             options: {
-
                 responsive: true,
-
                 maintainAspectRatio: false,
-
-                plugins: {
-
-                    legend: {
-                        position: 'bottom'
-                    }
-                }
+                plugins: { legend: { position: 'bottom' } }
             }
         });
     }
 
-
-    const entryChart =
-        document.getElementById('entryChart');
-
-    if (
-        entryChart &&
-        typeof Chart !== 'undefined'
-    ) {
-
+    const entryChart = document.getElementById('entryChart');
+    if (entryChart && typeof Chart !== 'undefined') {
         new Chart(entryChart, {
-
             type: 'bar',
-
             data: {
-
-                labels: [
-                    'Puntuales',
-                    'Tardanzas'
-                ],
-
+                labels: ['Puntuales', 'Tardanzas'],
                 datasets: [{
                     label: 'Colaboradores',
-
                     data: [
-                        Number(
-                            entryChart.dataset.puntuales || 0
-                        ),
-                        Number(
-                            entryChart.dataset.tardanzas || 0
-                        )
+                        Number(entryChart.dataset.puntuales || 0),
+                        Number(entryChart.dataset.tardanzas || 0)
                     ],
-
-                    backgroundColor: [
-                        '#118176',
-                        '#ffbd0a'
-                    ],
-
+                    backgroundColor: ['#0d6efd', '#ffc107'],
                     borderRadius: 6
                 }]
             },
-
             options: {
-
                 responsive: true,
-
                 maintainAspectRatio: false,
-
-                plugins: {
-
-                    legend: {
-                        display: false
-                    }
-                },
-
-                scales: {
-
-                    y: {
-                        beginAtZero: true,
-                        ticks: {
-                            precision: 0
-                        }
-                    }
-                }
+                plugins: { legend: { display: false } },
+                scales: { y: { beginAtZero: true, ticks: { precision: 0, stepSize: 1 } } }
             }
         });
     }

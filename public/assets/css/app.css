@@ -255,8 +255,9 @@ body {
     .reloj-container { max-width: 100%; padding-left: 10px; padding-right: 10px; }
 }
 
-/* ===== Fase 5: Dashboard y KPIs ===== */
-
+/* ========================================================
+   FASE 5 - DASHBOARD Y KPIs
+======================================================== */
 .metric-soft {
     height: 100%;
     min-height: 115px;
@@ -295,12 +296,289 @@ body {
 }
 
 @media (max-width: 575.98px) {
+    .chart-box { height: 240px; }
+    .metric-soft strong { font-size: 1.4rem; }
+}
 
-    .chart-box {
-        height: 240px;
+/* ========================================================
+   FASE 6 - REPORTES
+======================================================== */
+.report-menu-card {
+    border: 1px solid #e2e8f0;
+    transition: transform .2s ease, box-shadow .2s ease;
+}
+
+.report-menu-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, .08);
+}
+
+.report-menu-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 12px;
+    background: #e9f4f3;
+    color: #053034;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.35rem;
+    margin-bottom: 16px;
+}
+
+.report-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    margin-bottom: 18px;
+}
+
+.report-summary-card {
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-left: 4px solid #053034;
+    border-radius: 9px;
+    padding: 16px;
+    height: 100%;
+}
+
+.report-summary-card span {
+    display: block;
+    color: #64748b;
+    font-size: .72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.report-summary-card strong {
+    display: block;
+    color: #053034;
+    font-size: 1.65rem;
+    line-height: 1.2;
+    margin: 5px 0;
+}
+
+.report-summary-card small {
+    color: #8a96a3;
+    font-size: .72rem;
+}
+
+.print-report-header,
+.print-report-footer {
+    display: none;
+}
+
+.report-data-table td,
+.report-data-table th {
+    white-space: nowrap;
+}
+
+@media print {
+    @page {
+        size: A4 landscape;
+        margin: 11mm;
     }
 
-    .metric-soft strong {
-        font-size: 1.4rem;
+    body {
+        background: #fff !important;
+        color: #1f2937 !important;
+        font-family: Arial, sans-serif !important;
+        font-size: 9px !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+
+    .app-header,
+    .app-sidebar,
+    .app-footer,
+    .no-print,
+    .app-alert {
+        display: none !important;
+    }
+
+    .layout-root,
+    .app-shell,
+    .app-content {
+        display: block !important;
+        width: 100% !important;
+        min-height: auto !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        background: #fff !important;
+    }
+
+    .print-report-header {
+        display: block !important;
+        margin-bottom: 14px;
+    }
+
+    .print-brand-row {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        padding-bottom: 10px;
+        border-bottom: 3px solid #053034;
+    }
+
+    .print-brand-logo {
+        width: 135px;
+        max-height: 56px;
+        object-fit: contain;
+        margin: 0 auto 5px;
+    }
+
+    .print-company {
+        color: #053034;
+        font-size: 18px;
+        font-weight: 800;
+        letter-spacing: .5px;
+    }
+
+    .print-report-title {
+        color: #475569;
+        font-size: 12px;
+        font-weight: 700;
+        margin-top: 2px;
+    }
+
+    .print-report-meta {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 4px 18px;
+        padding: 8px 10px;
+        background: #f2f6f5 !important;
+        border-bottom: 1px solid #cfd8d6;
+        font-size: 8.5px;
+    }
+
+    .report-summary-grid {
+        display: grid !important;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 8px !important;
+        margin-bottom: 12px !important;
+    }
+
+    .report-summary-grid > div {
+        width: 100% !important;
+        max-width: none !important;
+    }
+
+    .report-summary-card {
+        border: 1px solid #cbd5e1 !important;
+        border-left: 3px solid #053034 !important;
+        border-radius: 4px !important;
+        padding: 8px 10px !important;
+        break-inside: avoid;
+        box-shadow: none !important;
+    }
+
+    .report-summary-card span { font-size: 7px !important; }
+    .report-summary-card strong { font-size: 15px !important; margin: 2px 0 !important; }
+    .report-summary-card small { font-size: 7px !important; }
+
+    .report-table-card {
+        border: 0 !important;
+        box-shadow: none !important;
+    }
+
+    .table-responsive {
+        overflow: visible !important;
+    }
+
+    .report-data-table {
+        width: 100% !important;
+        border-collapse: collapse !important;
+        table-layout: auto;
+    }
+
+    .report-data-table thead {
+        display: table-header-group;
+    }
+
+    .report-data-table thead th {
+        background: #053034 !important;
+        color: #fff !important;
+        border: 1px solid #24484b !important;
+        padding: 5px 4px !important;
+        font-size: 7.2px !important;
+        text-transform: uppercase;
+    }
+
+    .report-data-table tbody td {
+        border: 1px solid #d8dee5 !important;
+        padding: 4px !important;
+        font-size: 7.2px !important;
+        white-space: normal !important;
+        vertical-align: middle !important;
+    }
+
+    .report-data-table tbody tr:nth-child(even) td {
+        background: #f8fafc !important;
+    }
+
+    .report-data-table .badge {
+        border: 1px solid #aeb9c3;
+        background: transparent !important;
+        color: #1f2937 !important;
+        font-size: 6.8px !important;
+        padding: 2px 4px !important;
+    }
+
+    tr {
+        break-inside: avoid;
+    }
+
+    .print-report-footer {
+        display: block !important;
+        margin-top: 10px;
+        padding-top: 6px;
+        border-top: 1px solid #cbd5e1;
+        color: #64748b;
+        text-align: center;
+        font-size: 7px;
+    }
+}
+
+/* ===== Fase 6: Centro de Reportes completo ===== */
+.report-menu-card-info {
+    background: linear-gradient(145deg, #ffffff, #f4f9f8);
+}
+
+.report-export-root {
+    min-width: 0;
+}
+
+.report-actions .btn {
+    min-width: 112px;
+}
+
+.report-actions .btn:disabled {
+    cursor: wait;
+}
+
+.report-data-table tbody td {
+    max-width: 260px;
+}
+
+.report-data-table tbody td .small {
+    white-space: normal;
+}
+
+@media (max-width: 767.98px) {
+    .report-actions {
+        justify-content: stretch;
+    }
+
+    .report-actions .btn {
+        flex: 1 1 100%;
+    }
+}
+
+@media print {
+    .report-summary-grid.summary-five {
+        grid-template-columns: repeat(5, 1fr) !important;
     }
 }

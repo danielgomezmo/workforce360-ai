@@ -81,538 +81,69 @@ $fmtMinutes = static function (int $minutes): string {
     </div>
 <?php else: ?>
 
-<div class="page-hero mb-3">
-
-    <div class="page-hero-main">
-
-        <div class="page-hero-icon">
-            <i class="fa-solid fa-chart-line"></i>
+    <div class="page-hero mb-3">
+        <div class="page-hero-main">
+            <div class="page-hero-icon"><i class="fa-solid fa-chart-line"></i></div>
+            <div>
+                <h1>Dashboard Operativo</h1>
+                <p>Indicadores de asistencia y cumplimiento de jornada.</p>
+            </div>
         </div>
+        <span class="badge status-badge px-3 py-2">FASE 5</span>
+    </div>
 
-        <div>
-            <h1>Dashboard Operativo</h1>
-
-            <p>
-                Indicadores de asistencia y
-                cumplimiento de jornada
-            </p>
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <form method="get" action="<?= e(base_url('public/index.php')) ?>" class="row g-3 align-items-end">
+                <input type="hidden" name="route" value="dashboard">
+                <div class="col-md-4">
+                    <label class="form-label fw-semibold">Fecha de análisis</label>
+                    <input type="date" name="fecha" class="form-control" value="<?= e($selectedDate) ?>">
+                </div>
+                <div class="col-md-auto">
+                    <button class="btn btn-primary" type="submit"><i class="fa-solid fa-filter me-2"></i>Consultar</button>
+                </div>
+                <div class="col-md-auto">
+                    <a href="<?= e(route_url('dashboard')) ?>" class="btn btn-outline-secondary">Hoy</a>
+                </div>
+            </form>
         </div>
-
     </div>
 
-    <span class="badge status-badge px-3 py-2">
-        FASE 5
-    </span>
-
-</div>
-
-
-<!-- FILTRO POR FECHA -->
-
-<div class="card shadow-sm mb-4">
-
-    <div class="card-body">
-
-        <form
-            method="get"
-            action="<?= e(base_url('public/index.php')) ?>"
-            class="row g-3 align-items-end"
-        >
-
-            <input
-                type="hidden"
-                name="route"
-                value="dashboard"
-            >
-
-            <div class="col-md-4">
-
-                <label class="form-label fw-semibold">
-                    Fecha de análisis
-                </label>
-
-                <input
-                    type="date"
-                    name="fecha"
-                    class="form-control"
-                    value="<?= e($selectedDate) ?>"
-                >
-
-            </div>
-
-            <div class="col-md-auto">
-
-                <button
-                    class="btn btn-primary"
-                    type="submit"
-                >
-                    <i class="fa-solid fa-filter me-2"></i>
-                    Consultar
-                </button>
-
-            </div>
-
-            <div class="col-md-auto">
-
-                <a
-                    href="<?= e(route_url('dashboard')) ?>"
-                    class="btn btn-outline-secondary"
-                >
-                    Hoy
-                </a>
-
-            </div>
-
-        </form>
-
+    <div class="row g-3 mb-4">
+        <div class="col-6 col-xl-3"><div class="card kpi-card kpi-teal h-100"><div class="card-body p-3"><div class="kpi-label">Personal programado</div><div class="kpi-value"><?= e($operational['programados']) ?></div><div class="kpi-hint">Para la fecha seleccionada</div><i class="fa-solid fa-users kpi-icon"></i></div></div></div>
+        <div class="col-6 col-xl-3"><div class="card kpi-card kpi-green h-100"><div class="card-body p-3"><div class="kpi-label">Presentes</div><div class="kpi-value"><?= e($operational['presentes']) ?></div><div class="kpi-hint">Con ingreso registrado</div><i class="fa-solid fa-user-check kpi-icon"></i></div></div></div>
+        <div class="col-6 col-xl-3"><div class="card kpi-card kpi-red h-100"><div class="card-body p-3"><div class="kpi-label">Ausentes</div><div class="kpi-value"><?= e($operational['ausentes']) ?></div><div class="kpi-hint">Sin ingreso registrado</div><i class="fa-solid fa-user-xmark kpi-icon"></i></div></div></div>
+        <div class="col-6 col-xl-3"><div class="card kpi-card kpi-warning h-100"><div class="card-body p-3"><div class="kpi-label">Tardanzas</div><div class="kpi-value"><?= e($operational['tardanzas']) ?></div><div class="kpi-hint"><?= e($operational['minutos_tardanza'] . ' min acumulados') ?></div><i class="fa-solid fa-clock kpi-icon"></i></div></div></div>
     </div>
 
-</div>
-
-
-<!-- ESTADO OPERATIVO -->
-
-<div class="row g-3 mb-4">
-
-    <div class="col-6 col-xl-3">
-
-        <div class="card kpi-card kpi-teal h-100">
-
-            <div class="card-body p-3">
-
-                <div class="kpi-label">
-                    Personal programado
-                </div>
-
-                <div class="kpi-value">
-                    <?= e($operational['programados']) ?>
-                </div>
-
-                <div class="kpi-hint">
-                    Para la fecha seleccionada
-                </div>
-
-                <i class="fa-solid fa-users kpi-icon"></i>
-
-            </div>
-
-        </div>
-
+    <div class="card shadow-sm mb-4">
+        <div class="card-header py-3 px-4"><h2 class="h6 fw-bold mb-0"><i class="fa-solid fa-gauge-high me-2"></i>Indicadores de Gestión</h2></div>
+        <div class="card-body"><div class="row g-3">
+            <div class="col-md-6 col-xl-3"><div class="metric-soft"><span>Índice de asistencia</span><strong><?= e(number_format((float)$operational['indice_asistencia'], 1)) ?> %</strong><small>Presentes / programados</small></div></div>
+            <div class="col-md-6 col-xl-3"><div class="metric-soft"><span>Índice de puntualidad</span><strong><?= e(number_format((float)$operational['indice_puntualidad'], 1)) ?> %</strong><small>Puntuales / presentes</small></div></div>
+            <div class="col-md-6 col-xl-3"><div class="metric-soft"><span>Cumplimiento de jornada</span><strong><?= e(number_format((float)$operational['cumplimiento_jornada'], 1)) ?> %</strong><small>Horas trabajadas / programadas</small></div></div>
+            <div class="col-md-6 col-xl-3"><div class="metric-soft"><span>Absentismo</span><strong><?= e(number_format((float)$operational['absentismo'], 1)) ?> %</strong><small>Horas ausentes / programadas</small></div></div>
+        </div></div>
     </div>
 
-
-    <div class="col-6 col-xl-3">
-
-        <div class="card kpi-card kpi-green h-100">
-
-            <div class="card-body p-3">
-
-                <div class="kpi-label">
-                    Presentes
-                </div>
-
-                <div class="kpi-value">
-                    <?= e($operational['presentes']) ?>
-                </div>
-
-                <div class="kpi-hint">
-                    Con ingreso registrado
-                </div>
-
-                <i class="fa-solid fa-user-check kpi-icon"></i>
-
-            </div>
-
-        </div>
-
+    <div class="row g-4 mb-4">
+        <div class="col-xl-6"><div class="card shadow-sm h-100"><div class="card-header py-3 px-4"><h2 class="h6 fw-bold mb-0"><i class="fa-solid fa-chart-pie me-2"></i>Asistencia del día</h2></div><div class="card-body"><div class="chart-box"><canvas id="attendanceChart" data-presentes="<?= e($operational['presentes']) ?>" data-ausentes="<?= e($operational['ausentes']) ?>"></canvas></div></div></div></div>
+        <div class="col-xl-6"><div class="card shadow-sm h-100"><div class="card-header py-3 px-4"><h2 class="h6 fw-bold mb-0"><i class="fa-solid fa-chart-column me-2"></i>Puntualidad</h2></div><div class="card-body"><div class="chart-box"><canvas id="entryChart" data-puntuales="<?= e($operational['puntuales']) ?>" data-tardanzas="<?= e($operational['tardanzas']) ?>"></canvas></div></div></div></div>
     </div>
 
-
-    <div class="col-6 col-xl-3">
-
-        <div class="card kpi-card kpi-red h-100">
-
-            <div class="card-body p-3">
-
-                <div class="kpi-label">
-                    Ausentes
-                </div>
-
-                <div class="kpi-value">
-                    <?= e($operational['ausentes']) ?>
-                </div>
-
-                <div class="kpi-hint">
-                    Sin ingreso registrado
-                </div>
-
-                <i class="fa-solid fa-user-xmark kpi-icon"></i>
-
-            </div>
-
-        </div>
-
+    <div class="card shadow-sm">
+        <div class="card-header py-3 px-4"><h2 class="h6 fw-bold mb-0"><i class="fa-solid fa-list me-2"></i>Resumen de incidencias del día</h2></div>
+        <div class="table-responsive"><table class="table app-table mb-0"><thead><tr><th>Indicador</th><th>Cantidad</th></tr></thead><tbody>
+            <tr><td>Vacaciones</td><td><?= e($operational['vacaciones']) ?></td></tr>
+            <tr><td>Descansos médicos</td><td><?= e($operational['descansos_medicos']) ?></td></tr>
+            <tr><td>Licencias</td><td><?= e($operational['licencias']) ?></td></tr>
+            <tr><td>Permisos</td><td><?= e($operational['permisos']) ?></td></tr>
+            <tr><td>Salidas anticipadas</td><td><?= e($operational['salidas_anticipadas']) ?></td></tr>
+            <tr><td>Minutos perdidos por tardanza</td><td><?= e($operational['minutos_tardanza']) ?> min</td></tr>
+            <tr><td>Minutos perdidos por salida anticipada</td><td><?= e($operational['minutos_salida_anticipada']) ?> min</td></tr>
+            <tr><td>Faltas por validar</td><td><?= e($operational['faltas_por_validar']) ?></td></tr>
+        </tbody></table></div>
     </div>
-
-
-    <div class="col-6 col-xl-3">
-
-        <div class="card kpi-card kpi-warning h-100">
-
-            <div class="card-body p-3">
-
-                <div class="kpi-label">
-                    Tardanzas
-                </div>
-
-                <div class="kpi-value">
-                    <?= e($operational['tardanzas']) ?>
-                </div>
-
-                <div class="kpi-hint">
-                    <?= e(
-                        $operational['minutos_tardanza']
-                        . ' min acumulados'
-                    ) ?>
-                </div>
-
-                <i class="fa-solid fa-clock kpi-icon"></i>
-
-            </div>
-
-        </div>
-
-    </div>
-
-</div>
-
-
-<!-- KPIs -->
-
-<div class="card shadow-sm mb-4">
-
-    <div class="card-header py-3 px-4">
-
-        <h2 class="h6 fw-bold mb-0">
-
-            <i class="fa-solid fa-gauge-high me-2"></i>
-
-            Indicadores de Gestión
-
-        </h2>
-
-    </div>
-
-
-    <div class="card-body">
-
-        <div class="row g-3">
-
-            <div class="col-md-6 col-xl-3">
-
-                <div class="metric-soft">
-
-                    <span>
-                        Índice de asistencia
-                    </span>
-
-                    <strong>
-                        <?= e(
-                            number_format(
-                                $operational[
-                                    'indice_asistencia'
-                                ],
-                                1
-                            )
-                        ) ?> %
-                    </strong>
-
-                    <small>
-                        Presentes / programados
-                    </small>
-
-                </div>
-
-            </div>
-
-
-            <div class="col-md-6 col-xl-3">
-
-                <div class="metric-soft">
-
-                    <span>
-                        Índice de puntualidad
-                    </span>
-
-                    <strong>
-                        <?= e(
-                            number_format(
-                                $operational[
-                                    'indice_puntualidad'
-                                ],
-                                1
-                            )
-                        ) ?> %
-                    </strong>
-
-                    <small>
-                        Puntuales / presentes
-                    </small>
-
-                </div>
-
-            </div>
-
-
-            <div class="col-md-6 col-xl-3">
-
-                <div class="metric-soft">
-
-                    <span>
-                        Cumplimiento de jornada
-                    </span>
-
-                    <strong>
-                        <?= e(
-                            number_format(
-                                $operational[
-                                    'cumplimiento_jornada'
-                                ],
-                                1
-                            )
-                        ) ?> %
-                    </strong>
-
-                    <small>
-                        Horas trabajadas / programadas
-                    </small>
-
-                </div>
-
-            </div>
-
-
-            <div class="col-md-6 col-xl-3">
-
-                <div class="metric-soft">
-
-                    <span>
-                        Absentismo
-                    </span>
-
-                    <strong>
-                        <?= e(
-                            number_format(
-                                $operational[
-                                    'absentismo'
-                                ],
-                                1
-                            )
-                        ) ?> %
-                    </strong>
-
-                    <small>
-                        Horas ausentes / programadas
-                    </small>
-
-                </div>
-
-            </div>
-
-        </div>
-
-    </div>
-
-</div>
-
-
-<!-- GRÁFICOS -->
-
-<div class="row g-4 mb-4">
-
-    <div class="col-xl-6">
-
-        <div class="card shadow-sm h-100">
-
-            <div class="card-header py-3 px-4">
-
-                <h2 class="h6 fw-bold mb-0">
-
-                    <i class="fa-solid fa-chart-pie me-2"></i>
-
-                    Asistencia del día
-
-                </h2>
-
-            </div>
-
-            <div class="card-body">
-
-                <div class="chart-box">
-
-                    <canvas
-                        id="attendanceChart"
-                        data-presentes="<?= e($operational['presentes']) ?>"
-                        data-ausentes="<?= e($operational['ausentes']) ?>"
-                    ></canvas>
-
-                </div>
-
-            </div>
-
-        </div>
-
-    </div>
-
-
-    <div class="col-xl-6">
-
-        <div class="card shadow-sm h-100">
-
-            <div class="card-header py-3 px-4">
-
-                <h2 class="h6 fw-bold mb-0">
-
-                    <i class="fa-solid fa-chart-column me-2"></i>
-
-                    Puntualidad
-
-                </h2>
-
-            </div>
-
-            <div class="card-body">
-
-                <div class="chart-box">
-
-                    <canvas
-                        id="entryChart"
-                        data-puntuales="<?= e($operational['puntuales']) ?>"
-                        data-tardanzas="<?= e($operational['tardanzas']) ?>"
-                    ></canvas>
-
-                </div>
-
-            </div>
-
-        </div>
-
-    </div>
-
-</div>
-
-
-<!-- DETALLE -->
-
-<div class="card shadow-sm">
-
-    <div class="card-header py-3 px-4">
-
-        <h2 class="h6 fw-bold mb-0">
-
-            <i class="fa-solid fa-list me-2"></i>
-
-            Resumen de incidencias del día
-
-        </h2>
-
-    </div>
-
-    <div class="table-responsive">
-
-        <table class="table app-table mb-0">
-
-            <thead>
-
-                <tr>
-                    <th>Indicador</th>
-                    <th>Cantidad</th>
-                </tr>
-
-            </thead>
-
-            <tbody>
-
-                <tr>
-                    <td>Vacaciones</td>
-                    <td><?= e($operational['vacaciones']) ?></td>
-                </tr>
-
-                <tr>
-                    <td>Descansos médicos</td>
-                    <td><?= e($operational['descansos_medicos']) ?></td>
-                </tr>
-
-                <tr>
-                    <td>Licencias</td>
-                    <td><?= e($operational['licencias']) ?></td>
-                </tr>
-
-                <tr>
-                    <td>Permisos</td>
-                    <td><?= e($operational['permisos']) ?></td>
-                </tr>
-
-                <tr>
-                    <td>Salidas anticipadas</td>
-                    <td>
-                        <?= e(
-                            $operational[
-                                'salidas_anticipadas'
-                            ]
-                        ) ?>
-                    </td>
-                </tr>
-
-                <tr>
-                    <td>
-                        Minutos perdidos por tardanza
-                    </td>
-
-                    <td>
-                        <?= e(
-                            $operational[
-                                'minutos_tardanza'
-                            ]
-                        ) ?> min
-                    </td>
-                </tr>
-
-                <tr>
-                    <td>
-                        Minutos perdidos por salida anticipada
-                    </td>
-
-                    <td>
-                        <?= e(
-                            $operational[
-                                'minutos_salida_anticipada'
-                            ]
-                        ) ?> min
-                    </td>
-                </tr>
-
-                <tr>
-                    <td>
-                        Faltas por validar
-                    </td>
-
-                    <td>
-                        <?= e(
-                            $operational[
-                                'faltas_por_validar'
-                            ]
-                        ) ?>
-                    </td>
-                </tr>
-
-            </tbody>
-
-        </table>
-
-    </div>
-
-</div>
-
 <?php endif; ?>
 <?php require BASE_PATH . '/app/Views/layouts/footer.php'; ?>
