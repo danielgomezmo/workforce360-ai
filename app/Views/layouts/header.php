@@ -123,7 +123,7 @@ $roleLabel = $isCollaboratorPanel ? 'Mi Perfil' : (Auth::hasRole('ADMINISTRADOR'
 
                 <div class="sidebar-heading">SISTEMA</div>
                 <div class="sidebar-version">
-                    <i class="fa-solid fa-shield-halved"></i><span class="link-text">Workforce360 AI · Fase 4</span>
+                    <i class="fa-solid fa-shield-halved"></i><span class="link-text">Workforce360 AI · Fase 5</span>
                 </div>
             <?php endif; ?>
         </aside>

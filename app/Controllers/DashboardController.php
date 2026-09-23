@@ -1,9 +1,10 @@
 <?php
+
 namespace App\Controllers;
 
 use App\Core\Auth;
 use App\Core\Controller;
-use App\Core\Database;
+use App\Models\Dashboard;
 use App\Models\Incidencia;
 use App\Models\Marcacion;
 use Throwable;
@@ -14,11 +15,26 @@ class DashboardController extends Controller
     {
         Auth::requireLogin();
 
-        $isCollaboratorPanel = Auth::hasRole('COLABORADOR')
-            && !Auth::hasAnyRole(['ADMINISTRADOR', 'RRHH', 'SUPERVISOR', 'GERENCIA']);
+        $isCollaboratorPanel =
+            Auth::hasRole('COLABORADOR')
+            &&
+            !Auth::hasAnyRole([
+                'ADMINISTRADOR',
+                'RRHH',
+                'SUPERVISOR',
+                'GERENCIA'
+            ]);
+
+        /*
+        |--------------------------------------------------------------------------
+        | PANEL DEL COLABORADOR
+        |--------------------------------------------------------------------------
+        */
 
         if ($isCollaboratorPanel) {
+
             $collaborator = null;
+
             $personalStats = [
                 'total' => 0,
                 'puntuales' => 0,
@@ -27,61 +43,215 @@ class DashboardController extends Controller
                 'minutos_trabajados' => 0,
                 'solicitudes_pendientes' => 0,
             ];
+
             $recent = [];
+
             try {
+
                 $userId = Auth::id();
-                $collaborator = $userId ? Marcacion::collaboratorForUser((int)$userId) : null;
+
+                $collaborator =
+                    $userId
+                    ? Marcacion::collaboratorForUser(
+                        (int) $userId
+                    )
+                    : null;
+
                 if ($collaborator) {
-                    $id = (int)$collaborator['id_colaborador'];
-                    $personalStats = array_merge($personalStats, Marcacion::monthlyStatsForCollaborator($id));
-                    $personalStats['solicitudes_pendientes'] = Incidencia::pendingCountForCollaborator($id);
-                    $recent = Marcacion::recentForCollaborator($id, 5);
+
+                    $id =
+                        (int) $collaborator[
+                            'id_colaborador'
+                        ];
+
+                    $personalStats =
+                        array_merge(
+                            $personalStats,
+                            Marcacion::
+                            monthlyStatsForCollaborator(
+                                $id
+                            )
+                        );
+
+                    $personalStats[
+                        'solicitudes_pendientes'
+                    ] =
+                        Incidencia::
+                        pendingCountForCollaborator(
+                            $id
+                        );
+
+                    $recent =
+                        Marcacion::
+                        recentForCollaborator(
+                            $id,
+                            5
+                        );
                 }
+
             } catch (Throwable) {
-                // El resumen personal sigue cargando aunque falte una migración.
             }
 
-            $this->view('dashboard/index', [
-                'user' => Auth::user(),
-                'isCollaboratorPanel' => true,
-                'colaborador' => $collaborator,
-                'personalStats' => $personalStats,
-                'recent' => $recent,
-                'stats' => [],
-            ]);
+            $this->view(
+                'dashboard/index',
+                [
+                    'user' => Auth::user(),
+
+                    'isCollaboratorPanel' => true,
+
+                    'colaborador' =>
+                        $collaborator,
+
+                    'personalStats' =>
+                        $personalStats,
+
+                    'recent' =>
+                        $recent,
+
+                    'operational' => [],
+
+                    'selectedDate' =>
+                        date('Y-m-d'),
+                ]
+            );
+
             return;
         }
 
-        $stats = [
-            'colaboradores' => 0,
-            'activos' => 0,
-            'areas' => 0,
-            'horarios' => 0,
-            'marcaciones_hoy' => 0,
-            'tardanzas_hoy' => 0,
-            'incidencias_pendientes' => 0,
+        /*
+        |--------------------------------------------------------------------------
+        | DASHBOARD OPERATIVO
+        |--------------------------------------------------------------------------
+        */
+
+        $selectedDate =
+            (string) (
+                $_GET['fecha']
+                ??
+                date('Y-m-d')
+            );
+
+        if (
+            !preg_match(
+                '/^\d{4}-\d{2}-\d{2}$/',
+                $selectedDate
+            )
+        ) {
+            $selectedDate = date('Y-m-d');
+        }
+
+        $operational = [
+            'programados' => 0,
+            'presentes' => 0,
+            'ausentes' => 0,
+
+            'faltas_por_validar' => 0,
+
+            'puntuales' => 0,
+            'tardanzas' => 0,
+
+            'salidas_anticipadas' => 0,
+
+            'vacaciones' => 0,
+            'descansos_medicos' => 0,
+            'licencias' => 0,
+            'permisos' => 0,
+
+            'minutos_tardanza' => 0,
+
+            'minutos_salida_anticipada' => 0,
+
+            'minutos_programados' => 0,
+
+            'minutos_trabajados' => 0,
+
+            'indice_asistencia' => 0,
+
+            'indice_puntualidad' => 0,
+
+            'indice_tardanza' => 0,
+
+            'cumplimiento_jornada' => 0,
+
+            'absentismo' => 0,
         ];
 
         try {
-            $db = Database::connection();
-            $stats['colaboradores'] = (int) $db->query('SELECT COUNT(*) FROM colaboradores')->fetchColumn();
-            $stats['activos'] = (int) $db->query("SELECT COUNT(*) FROM colaboradores WHERE estado = 'ACTIVO'")->fetchColumn();
-            $stats['areas'] = (int) $db->query('SELECT COUNT(*) FROM areas WHERE activo = 1')->fetchColumn();
-            $stats['horarios'] = (int) $db->query('SELECT COUNT(*) FROM horarios WHERE activo = 1')->fetchColumn();
-            $stats['marcaciones_hoy'] = (int) $db->query('SELECT COUNT(*) FROM marcaciones WHERE fecha = CURDATE()')->fetchColumn();
-            $stats['tardanzas_hoy'] = (int) $db->query("SELECT COUNT(*) FROM marcaciones WHERE fecha = CURDATE() AND minutos_tardanza > 0")->fetchColumn();
-            $stats['incidencias_pendientes'] = (int) $db->query("SELECT COUNT(*) FROM incidencias i INNER JOIN tipos_incidencia t ON t.id_tipo_incidencia = i.id_tipo_incidencia WHERE i.estado = 'PENDIENTE' OR (i.estado = 'REGISTRADA' AND t.requiere_aprobacion = 1)")->fetchColumn();
-        } catch (Throwable) {
-            // El dashboard sigue cargando aunque la base aún no haya sido actualizada.
+
+            /*
+             * Si es supervisor:
+             * solo verá indicadores de su equipo.
+             */
+
+            $isSupervisorOnly =
+                Auth::hasRole('SUPERVISOR')
+                &&
+                !Auth::hasAnyRole([
+                    'ADMINISTRADOR',
+                    'RRHH',
+                    'GERENCIA'
+                ]);
+
+            $supervisorId =
+                $isSupervisorOnly
+                ? (Auth::collaboratorId() ?? -1)
+                : null;
+
+            $operational =
+                array_merge(
+                    $operational,
+
+                    Dashboard::
+                    operationalMetrics(
+                        $selectedDate,
+                        $supervisorId
+                    )
+                );
+
+        } catch (Throwable $e) {
+
+            if (
+                (bool)
+                config(
+                    'app.debug',
+                    false
+                )
+            ) {
+
+                flash(
+                    'error',
+
+                    'No se pudieron calcular '
+                    . 'los indicadores: '
+                    . $e->getMessage()
+                );
+            }
         }
 
-        $this->view('dashboard/index', [
-            'user' => Auth::user(),
-            'isCollaboratorPanel' => false,
-            'stats' => $stats,
-            'colaborador' => null,
-            'personalStats' => [],
-            'recent' => [],
-        ]);
+        $this->view(
+            'dashboard/index',
+            [
+                'user' =>
+                    Auth::user(),
+
+                'isCollaboratorPanel' =>
+                    false,
+
+                'operational' =>
+                    $operational,
+
+                'selectedDate' =>
+                    $selectedDate,
+
+                'colaborador' =>
+                    null,
+
+                'personalStats' =>
+                    [],
+
+                'recent' =>
+                    [],
+            ]
+        );
     }
 }
