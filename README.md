@@ -68,3 +68,8 @@ Colaborador demo:
 ## Importante
 
 El proyecto se mantiene en desarrollo. Cada avance se prueba antes de guardarlo como una nueva versión en Git y subirlo al repositorio.
+
+
+## Estado actual — Fase 6 completa
+
+Actualmente el proyecto incluye Dashboard/KPIs, Centro de Reportes completo y Auditoría avanzada. El administrador puede revisar la trazabilidad de accesos, marcaciones, cambios de colaboradores, horarios e incidencias, incluyendo valores anteriores/nuevos, IP y fecha del evento.

@@ -582,3 +582,182 @@ body {
         grid-template-columns: repeat(5, 1fr) !important;
     }
 }
+
+/* ========================================================
+   FASE 6 - AUDITORÍA Y TRAZABILIDAD
+======================================================== */
+.audit-stat-card {
+    position: relative;
+    overflow: hidden;
+    border: 0;
+    color: #fff;
+    background: #053034;
+}
+
+.audit-stat-card .card-body {
+    position: relative;
+    min-height: 118px;
+    padding: 18px;
+}
+
+.audit-stat-card .audit-stat-label {
+    display: block;
+    font-size: .7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    opacity: .72;
+}
+
+.audit-stat-card strong {
+    display: block;
+    margin: 4px 0 2px;
+    font-size: 1.8rem;
+    line-height: 1.1;
+}
+
+.audit-stat-card small {
+    font-size: .72rem;
+    opacity: .78;
+}
+
+.audit-stat-card .card-body > i {
+    position: absolute;
+    right: 16px;
+    bottom: 10px;
+    font-size: 3.4rem;
+    opacity: .16;
+}
+
+.audit-stat-green { background: #198754; }
+.audit-stat-blue { background: #2764d8; }
+.audit-stat-red { background: #c83b48; }
+
+.audit-filter-card .form-label {
+    font-size: .76rem;
+    font-weight: 700;
+    color: #435465;
+}
+
+.audit-table td,
+.audit-table th {
+    vertical-align: middle;
+}
+
+.audit-role-chip {
+    display: inline-flex;
+    align-items: center;
+    padding: .24rem .48rem;
+    border: 1px solid #d9e1e7;
+    border-radius: 999px;
+    background: #f8fafc;
+    color: #52606d;
+    font-size: .66rem;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.audit-action {
+    display: inline-flex;
+    align-items: center;
+    padding: .28rem .52rem;
+    border-radius: 999px;
+    font-size: .67rem;
+    font-weight: 800;
+    white-space: nowrap;
+}
+
+.audit-success { background: #dff5e7; color: #14753b; }
+.audit-danger { background: #fde5e7; color: #b42332; }
+.audit-primary { background: #e4edff; color: #2459bc; }
+.audit-info { background: #dff5f7; color: #0c6c77; }
+.audit-warning { background: #fff1cb; color: #8a6200; }
+.audit-neutral { background: #eef1f4; color: #53616d; }
+
+.audit-detail-grid > div {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.audit-detail-grid span,
+.audit-origin-item span,
+.audit-reason > span {
+    color: #72808d;
+    font-size: .68rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: .02em;
+}
+
+.audit-detail-grid strong {
+    color: #25313b;
+    font-size: .93rem;
+}
+
+.audit-detail-grid small {
+    color: #7d8994;
+}
+
+.audit-reason {
+    border-left: 4px solid #053034;
+    border-radius: 6px;
+    background: #f7fafb;
+    padding: 12px 14px;
+}
+
+.audit-origin-item code {
+    display: inline-block;
+    margin-top: 4px;
+    padding: .35rem .5rem;
+    border-radius: 5px;
+    background: #f1f4f6;
+    color: #053034;
+}
+
+.audit-integrity-note {
+    border: 1px solid #d9e6e5;
+    border-radius: 7px;
+    background: #edf6f5;
+    color: #315a57;
+    padding: 12px;
+    font-size: .78rem;
+    line-height: 1.5;
+}
+
+.audit-comparison-table .audit-changed-row td {
+    background: #fffdf3;
+}
+
+.audit-value-box {
+    min-width: 170px;
+    max-width: 430px;
+    padding: 7px 9px;
+    border-radius: 6px;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+    font-size: .72rem;
+    line-height: 1.45;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+}
+
+.audit-value-before {
+    background: #fff1f2;
+    color: #8f2832;
+    border: 1px solid #f4d7da;
+}
+
+.audit-value-after {
+    background: #edf8f1;
+    color: #246c40;
+    border: 1px solid #d4ecdd;
+}
+
+@media (max-width: 767.98px) {
+    .audit-table {
+        min-width: 980px;
+    }
+
+    .audit-comparison-table {
+        min-width: 760px;
+    }
+}

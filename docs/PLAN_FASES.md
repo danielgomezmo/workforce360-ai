@@ -60,3 +60,15 @@
 - Pronóstico de disponibilidad.
 - Pronóstico de absentismo.
 - Tendencias y alertas.
+
+
+## Fase 6 — COMPLETADA
+
+- Centro de Reportes: asistencia, tardanzas, salidas anticipadas, incidencias y horas trabajadas.
+- Exportación Excel, PDF e impresión.
+- Auditoría avanzada con filtros, paginación, detalle Antes/Después, IP y User Agent.
+- Exportación CSV del historial de auditoría.
+
+## Siguiente fase
+
+Fase 7 — Workforce AI: servicio Python/FastAPI, preparación de datos y primeros pronósticos agregados.

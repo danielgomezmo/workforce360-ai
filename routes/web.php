@@ -8,6 +8,7 @@ use App\Controllers\HorarioController;
 use App\Controllers\MarcacionController;
 use App\Controllers\IncidenciaController;
 use App\Controllers\ReporteController;
+use App\Controllers\AuditoriaController;
 
 $router->get('login', [AuthController::class, 'showLogin']);
 $router->post('login', [AuthController::class, 'login']);
@@ -56,5 +57,9 @@ $router->get('reportes/tardanzas', [ReporteController::class, 'lateness']);
 $router->get('reportes/salidas-anticipadas', [ReporteController::class, 'earlyDepartures']);
 $router->get('reportes/incidencias', [ReporteController::class, 'incidents']);
 $router->get('reportes/horas-trabajadas', [ReporteController::class, 'workedHours']);
+
+$router->get('auditoria', [AuditoriaController::class, 'index']);
+$router->get('auditoria/detalle', [AuditoriaController::class, 'detail']);
+$router->get('auditoria/exportar', [AuditoriaController::class, 'exportCsv']);
 
 $router->get('api/status', [ApiController::class, 'status']);

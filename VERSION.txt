@@ -1,4 +1,8 @@
-Workforce360 AI - Fase 6
-Centro de Reportes completo: asistencia, tardanzas, salidas anticipadas, incidencias y horas trabajadas.
-Exportación profesional a Excel (.xlsx), PDF e impresión.
-Auditoría avanzada: siguiente avance dentro de la Fase 6.
+Workforce360 AI - Fase 6 completa
+
+Incluye:
+- Dashboard operativo y KPIs.
+- Centro de Reportes completo.
+- Exportaciones Excel, PDF e impresión.
+- Auditoría avanzada y trazabilidad.
+- Filtros, detalle Antes/Después y exportación CSV de auditoría.

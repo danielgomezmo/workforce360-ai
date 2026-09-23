@@ -8,6 +8,7 @@ $error = flash('error');
 $canManage = $user && Auth::hasAnyRole(['ADMINISTRADOR', 'RRHH']);
 $canViewMarks = $user && Auth::hasAnyRole(['ADMINISTRADOR', 'RRHH', 'SUPERVISOR']);
 $canViewReports = $user && Auth::hasAnyRole(['ADMINISTRADOR', 'RRHH', 'SUPERVISOR', 'GERENCIA']);
+$canViewAudit = $user && Auth::hasRole('ADMINISTRADOR');
 $hasLinkedCollaborator = $user && Auth::collaboratorId() !== null;
 $canUsePersonalAttendance = $user && (Auth::hasRole('COLABORADOR') || $hasLinkedCollaborator);
 $isCollaboratorPanel = $user
@@ -126,6 +127,15 @@ $roleLabel = $isCollaboratorPanel ? 'Mi Perfil' : (Auth::hasRole('ADMINISTRADOR'
                         </a>
                     <?php endif; ?>
                 </nav>
+
+                <?php if ($canViewAudit): ?>
+                    <div class="sidebar-heading">ADMINISTRACIÓN</div>
+                    <nav class="sidebar-nav">
+                        <a class="nav-link-custom <?= str_starts_with($currentRoute, 'auditoria') ? 'active' : '' ?>" href="<?= e(route_url('auditoria')) ?>" title="Auditoría">
+                            <i class="fa-solid fa-shield-halved"></i><span class="link-text">Auditoría</span>
+                        </a>
+                    </nav>
+                <?php endif; ?>
 
                 <div class="sidebar-heading">SISTEMA</div>
                 <div class="sidebar-version">

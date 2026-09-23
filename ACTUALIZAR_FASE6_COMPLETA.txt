@@ -1,0 +1,17 @@
+WORKFORCE360 AI — FASE 6 COMPLETA
+Reportes + Auditoría avanzada y trazabilidad
+
+SI YA TIENES EL PROYECTO HASTA REPORTES:
+1. Haz una copia de seguridad de C:\xampp\htdocs\Workforce360AI.
+2. NO borres la carpeta actual si usas Git: dentro se encuentra la carpeta oculta .git.
+3. Copia el contenido de la carpeta Workforce360AI de este ZIP sobre tu carpeta actual.
+4. Acepta reemplazar los archivos existentes.
+5. NO ejecutes ningún SQL ni migración nueva.
+6. Inicia Apache y MySQL.
+7. Entra al sistema como Administrador y pulsa Ctrl + F5.
+8. En el menú aparecerá Administración > Auditoría.
+
+IMPORTANTE:
+- El historial Git se conserva mientras mantengas la carpeta .git de tu proyecto actual.
+- Este ZIP no contiene ni reemplaza .git.
+- Después de probar toda la Fase 6 puedes hacer el commit y push.
