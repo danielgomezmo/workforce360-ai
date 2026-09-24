@@ -1,0 +1,6 @@
+git status
+git diff
+git add .
+git status
+git commit -m "Fase 7 - Integración del módulo predictivo de asistencia"
+git push

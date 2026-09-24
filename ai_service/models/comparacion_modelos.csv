@@ -1,0 +1,6 @@
+﻿Modelo,MAE,RMSE,R2,Mejora_MAE_vs_Baseline
+Baseline promedio,2.926,3.724,-0.071,0.0
+Ridge Regression,2.755,3.546,0.029,5.844
+Random Forest,2.868,3.715,-0.066,1.988
+Gradient Boosting,2.796,3.649,-0.028,4.442
+HistGradientBoosting,3.043,4.005,-0.239,-3.989
