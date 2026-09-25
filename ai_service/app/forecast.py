@@ -258,6 +258,45 @@ def pronosticar_dia(
         tardanza_media_7,
     )
 
+    fila_contexto = X.iloc[0]
+    dias_nombre = {
+        0: "Lunes",
+        1: "Martes",
+        2: "Miércoles",
+        3: "Jueves",
+        4: "Viernes",
+        5: "Sábado",
+        6: "Domingo",
+    }
+
+    factores_contexto = {
+        "dia_semana_nombre": dias_nombre.get(
+            int(fecha_objetivo.dayofweek),
+            "Desconocido",
+        ),
+        "programados": int(programados),
+        "asistencia_ultimo_dia": round(
+            float(fila_contexto["asistencia_lag_1"]),
+            2,
+        ),
+        "asistencia_hace_7_dias": round(
+            float(fila_contexto["asistencia_lag_7"]),
+            2,
+        ),
+        "asistencia_media_7": round(
+            float(fila_contexto["asistencia_media_7"]),
+            2,
+        ),
+        "asistencia_media_30": round(
+            float(fila_contexto["asistencia_media_30"]),
+            2,
+        ),
+        "tardanza_media_7": round(
+            float(fila_contexto["tardanza_media_7"]),
+            2,
+        ),
+    }
+
     indice = float(
         np.clip(
             modelo.predict(X)[0],
@@ -325,6 +364,7 @@ def pronosticar_dia(
             "desconocida",
         ),
         "programados": int(programados),
+        "factores_contexto": factores_contexto,
         "indice_asistencia_estimado": round(
             indice,
             2,

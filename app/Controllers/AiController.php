@@ -5,6 +5,7 @@ namespace App\Controllers;
 use App\Core\Auth;
 use App\Core\Controller;
 use App\Services\AiPredictionService;
+use App\Services\PredictionHistoryService;
 use Throwable;
 
 class AiController extends Controller
@@ -29,11 +30,19 @@ class AiController extends Controller
         $payload = [
             'apiAvailable' => false,
             'apiError' => null,
+            'historyError' => null,
             'dataset' => [],
             'model' => [],
             'evaluation' => [],
             'daily' => [],
             'weekly' => [],
+            'predictionHistory' => [],
+            'predictionSummary' => [
+                'guardados' => 0,
+                'evaluados' => 0,
+                'pendientes' => 0,
+                'error_medio_pp' => null,
+            ],
         ];
 
         try {
@@ -62,11 +71,45 @@ class AiController extends Controller
                         $payload['apiError'] = $response['error'] ?? 'No fue posible completar una consulta al servicio de IA.';
                     }
                 }
+
+                try {
+                    $history = new PredictionHistoryService();
+
+                    if (($daily['ok'] ?? false) && is_array($daily['data'] ?? null)) {
+                        $history->saveDaily($daily['data']);
+                    }
+
+                    if (($weekly['ok'] ?? false) && is_array($weekly['data'] ?? null)) {
+                        $history->saveWeekly($weekly['data']);
+                    }
+
+                    $payload['predictionHistory'] = $history->dailyHistory(15);
+                    $payload['predictionSummary'] = $history->summary($payload['predictionHistory']);
+                } catch (Throwable $historyException) {
+                    $payload['historyError'] = (bool) config('app.debug', false)
+                        ? 'No se pudo actualizar el historial de pronósticos: ' . $historyException->getMessage()
+                        : 'No se pudo actualizar el historial de pronósticos.';
+                }
             }
         } catch (Throwable $e) {
             $payload['apiError'] = (bool) config('app.debug', false)
                 ? $e->getMessage()
                 : 'No fue posible consultar el servicio de IA.';
+        }
+
+        // El historial puede consultarse incluso si FastAPI está temporalmente apagado.
+        if ($payload['predictionHistory'] === []) {
+            try {
+                $history = new PredictionHistoryService();
+                $payload['predictionHistory'] = $history->dailyHistory(15);
+                $payload['predictionSummary'] = $history->summary($payload['predictionHistory']);
+            } catch (Throwable $historyException) {
+                if ($payload['historyError'] === null) {
+                    $payload['historyError'] = (bool) config('app.debug', false)
+                        ? 'No se pudo leer el historial de pronósticos: ' . $historyException->getMessage()
+                        : 'No se pudo leer el historial de pronósticos.';
+                }
+            }
         }
 
         $this->view('ai/index', [

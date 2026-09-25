@@ -1,0 +1,9 @@
+cd C:\xampp\htdocs\Workforce360AI
+
+git status
+git diff
+git add .
+git status
+git commit -m "Fase 7 - Seguimiento y explicacion de pronosticos"
+git log --oneline -5
+git push origin main

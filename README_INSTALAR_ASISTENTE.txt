@@ -104,3 +104,7 @@ git add .
 git status
 git commit -m "Fase 7 - Integración de Workforce AI y asistente inteligente"
 git push origin main
+
+ACTUALIZACION V3 - SEGUIMIENTO DE PRONOSTICOS
+---------------------------------------------
+Esta version tambien guarda y compara predicciones. Consulta README_INSTALAR_SEGUIMIENTO_PRONOSTICOS.txt.

@@ -38,6 +38,14 @@ final class WorkforceAssistantService
             return $this->adminModelStatus();
         }
 
+        if ($this->containsAny($text, ['historial de predicciones', 'historial de pronosticos', 'predicciones guardadas', 'seguimiento de predicciones', 'seguimiento de pronosticos'])) {
+            return $this->adminPredictionHistorySummary();
+        }
+
+        if ($this->containsAny($text, ['prediccion de ayer', 'pronostico de ayer', 'fue correcta la prediccion', 'fue correcto el pronostico', 'comparar prediccion', 'comparar pronostico', 'error de la prediccion', 'error del pronostico'])) {
+            return $this->adminPredictionComparison($text);
+        }
+
         if ($this->containsAny($text, ['lista de asistencia', 'lista de los que asistieron', 'quienes asistieron', 'quienes vinieron', 'asistieron hoy', 'asistencia sede'])) {
             return $this->adminAttendanceList($this->resolveDate($text));
         }
@@ -441,6 +449,12 @@ final class WorkforceAssistantService
             ];
         }
 
+        try {
+            (new PredictionHistoryService())->saveDaily($d);
+        } catch (\Throwable) {
+            // La predicción puede mostrarse aunque el historial no pueda guardarse.
+        }
+
         $status = (string) ($d['estado_modelo'] ?? 'EXPERIMENTAL');
         return [
             'intent' => 'admin_daily_forecast',
@@ -467,6 +481,12 @@ final class WorkforceAssistantService
         }
 
         $d = $response['data'] ?? [];
+        try {
+            (new PredictionHistoryService())->saveWeekly($d);
+        } catch (\Throwable) {
+            // La predicción puede mostrarse aunque el historial no pueda guardarse.
+        }
+
         return [
             'intent' => 'admin_weekly_forecast',
             'message' => 'Predicción de los próximos ' . (int) ($d['dias_operativos'] ?? 0) . " días operativos:\n"
@@ -500,6 +520,100 @@ final class WorkforceAssistantService
                 . "\nR² holdout: " . number_format((float) ($d['r2_holdout'] ?? 0), 3)
                 . "\nValidación temporal supera baseline: " . (($d['validacion_temporal_supera_baseline'] ?? false) ? 'Sí' : 'No')
                 . "\n\nEl estado EXPERIMENTAL indica que el resultado debe interpretarse como apoyo técnico y no como certeza.",
+        ];
+    }
+
+    private function adminPredictionHistorySummary(): array
+    {
+        $historyService = new PredictionHistoryService();
+        $history = $historyService->dailyHistory(10);
+        $summary = $historyService->summary($history);
+
+        if ($history === []) {
+            return [
+                'intent' => 'admin_prediction_history',
+                'message' => 'Todavía no hay predicciones diarias guardadas. Abre Workforce AI o solicita una predicción para comenzar el historial.',
+            ];
+        }
+
+        $errorText = $summary['error_medio_pp'] === null
+            ? 'Aún no hay predicciones pasadas suficientes para calcular el error real.'
+            : 'Error medio observado en predicciones ya cerradas: ' . number_format((float) $summary['error_medio_pp'], 2) . ' puntos porcentuales.';
+
+        $lines = [
+            'Seguimiento de predicciones:',
+            '• Pronósticos visibles: ' . (int) $summary['guardados'],
+            '• Evaluados contra asistencia real: ' . (int) $summary['evaluados'],
+            '• Pendientes/en curso: ' . (int) $summary['pendientes'],
+            '• ' . $errorText,
+            '',
+            'Últimos registros:',
+        ];
+
+        foreach (array_slice($history, 0, 5) as $row) {
+            $line = '• ' . $this->humanDate((string) $row['fecha'])
+                . ' — estimado ' . number_format((float) ($row['prediccion'] ?? 0), 2) . '%';
+
+            if (($row['estado_comparacion'] ?? '') === 'EVALUADO') {
+                $line .= ' · real ' . number_format((float) ($row['real'] ?? 0), 2) . '%'
+                    . ' · error ' . number_format((float) ($row['error_absoluto_pp'] ?? 0), 2) . ' pp';
+            } elseif (($row['estado_comparacion'] ?? '') === 'EN_CURSO') {
+                $line .= ' · jornada en curso';
+            } else {
+                $line .= ' · pendiente';
+            }
+            $lines[] = $line;
+        }
+
+        return [
+            'intent' => 'admin_prediction_history',
+            'message' => implode("\n", $lines),
+        ];
+    }
+
+    private function adminPredictionComparison(string $text): array
+    {
+        $date = $this->resolveDate($text);
+        $row = (new PredictionHistoryService())->comparisonForDate($date);
+
+        if ($row === null) {
+            return [
+                'intent' => 'admin_prediction_comparison',
+                'message' => 'No encuentro una predicción diaria guardada para ' . $this->humanDate($date) . '.',
+            ];
+        }
+
+        $estimated = number_format((float) ($row['prediccion'] ?? 0), 2) . '%';
+        $state = (string) ($row['estado_comparacion'] ?? 'FUTURO');
+
+        if ($state === 'EVALUADO') {
+            return [
+                'intent' => 'admin_prediction_comparison',
+                'message' => 'Comparación del ' . $this->humanDate($date)
+                    . ":\n• Predicción: {$estimated}"
+                    . "\n• Asistencia real: " . number_format((float) ($row['real'] ?? 0), 2) . '%'
+                    . "\n• Diferencia absoluta: " . number_format((float) ($row['error_absoluto_pp'] ?? 0), 2) . ' puntos porcentuales.'
+                    . "\n\nLa diferencia sirve para evaluar el modelo; no significa que la predicción deba coincidir exactamente con la realidad.",
+            ];
+        }
+
+        if ($state === 'EN_CURSO') {
+            return [
+                'intent' => 'admin_prediction_comparison',
+                'message' => 'La predicción para hoy es ' . $estimated . ', pero la jornada todavía está en curso. La comparación se cerrará cuando la fecha sea histórica.',
+            ];
+        }
+
+        if ($state === 'SIN_DATOS') {
+            return [
+                'intent' => 'admin_prediction_comparison',
+                'message' => 'Existe una predicción de ' . $estimated . ' para ' . $this->humanDate($date) . ', pero no hay datos reales suficientes para compararla.',
+            ];
+        }
+
+        return [
+            'intent' => 'admin_prediction_comparison',
+            'message' => 'La predicción guardada para ' . $this->humanDate($date) . ' es ' . $estimated . '. Todavía es una fecha futura, así que no existe un resultado real para compararla.',
         ];
     }
 
@@ -717,7 +831,7 @@ final class WorkforceAssistantService
     {
         return [
             'intent' => 'admin_help',
-            'message' => "Hola. Soy el Asistente Workforce. Como Administrador puedo consultar datos globales en vivo y el módulo predictivo.\n\nPuedes preguntarme, por ejemplo:\n• Resumen de asistencia de hoy\n• Lista de los que asistieron hoy\n• ¿Cuántas tardanzas hubo ayer?\n• ¿Cuántos ausentes hay hoy?\n• Incidencias pendientes\n• Colaboradores activos\n• Personal por área\n• Top tardanzas del mes\n• Predicción de asistencia\n• Predicción semanal\n• Estado del modelo predictivo\n• ¿Cómo activo Workforce AI?",
+            'message' => "Hola. Soy el Asistente Workforce. Como Administrador puedo consultar datos globales en vivo y el módulo predictivo.\n\nPuedes preguntarme, por ejemplo:\n• Resumen de asistencia de hoy\n• Lista de los que asistieron hoy\n• ¿Cuántas tardanzas hubo ayer?\n• ¿Cuántos ausentes hay hoy?\n• Incidencias pendientes\n• Colaboradores activos\n• Personal por área\n• Top tardanzas del mes\n• Predicción de asistencia\n• Predicción semanal\n• Historial de predicciones\n• ¿Fue correcta la predicción de ayer?\n• Estado del modelo predictivo\n• ¿Cómo activo Workforce AI?",
         ];
     }
 

@@ -12,6 +12,9 @@ $modelVersion = (string) ($model['version_modelo'] ?? $daily['version_modelo'] ?
 $modelState = (string) ($model['estado_modelo'] ?? $evaluation['estado_modelo'] ?? 'EXPERIMENTAL');
 $temporalBeatsBaseline = (bool) ($evaluation['ml_supera_baseline'] ?? false);
 $weeklyDetail = is_array($weekly['detalle'] ?? null) ? $weekly['detalle'] : [];
+$dailyFactors = is_array($daily['factores_contexto'] ?? null) ? $daily['factores_contexto'] : [];
+$predictionHistory = is_array($predictionHistory ?? null) ? $predictionHistory : [];
+$predictionSummary = is_array($predictionSummary ?? null) ? $predictionSummary : [];
 
 $stateClass = $modelState === 'VALIDADO'
     ? 'bg-success-subtle text-success-emphasis'
@@ -222,6 +225,106 @@ $stateClass = $modelState === 'VALIDADO'
                         <?php endforeach; ?>
                         </tbody>
                     </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <?php if ($historyError): ?>
+        <div class="alert alert-warning border-0 shadow-sm mb-4">
+            <i class="fa-solid fa-database me-2"></i><?= e($historyError) ?>
+        </div>
+    <?php endif; ?>
+
+    <div class="row g-4 mb-4">
+        <div class="col-xl-5">
+            <div class="card shadow-sm h-100">
+                <div class="card-header py-3 px-4">
+                    <h2 class="h6 fw-bold mb-1"><i class="fa-solid fa-magnifying-glass-chart me-2"></i>¿Por qué se generó esta predicción?</h2>
+                    <div class="small text-secondary">Variables de contexto que recibió el modelo para la fecha seleccionada.</div>
+                </div>
+                <div class="card-body p-4">
+                    <?php if (!$dailyOperational || !$dailyFactors): ?>
+                        <div class="text-secondary">No hay factores disponibles para esta fecha.</div>
+                    <?php else: ?>
+                        <?php
+                        $avg7 = (float) ($dailyFactors['asistencia_media_7'] ?? 0);
+                        $avg30 = (float) ($dailyFactors['asistencia_media_30'] ?? 0);
+                        $trendText = abs($avg7 - $avg30) < 0.25
+                            ? 'Estable frente al promedio de 30 días'
+                            : ($avg7 > $avg30 ? 'Reciente ligeramente por encima del promedio de 30 días' : 'Reciente ligeramente por debajo del promedio de 30 días');
+                        ?>
+                        <div class="d-flex justify-content-between py-2 border-bottom"><span class="text-secondary">Día de la semana</span><strong><?= e($dailyFactors['dia_semana_nombre'] ?? '—') ?></strong></div>
+                        <div class="d-flex justify-content-between py-2 border-bottom"><span class="text-secondary">Personal programado</span><strong><?= e($dailyFactors['programados'] ?? 0) ?></strong></div>
+                        <div class="d-flex justify-content-between py-2 border-bottom"><span class="text-secondary">Asistencia del último día histórico</span><strong><?= e(number_format((float) ($dailyFactors['asistencia_ultimo_dia'] ?? 0), 2)) ?>%</strong></div>
+                        <div class="d-flex justify-content-between py-2 border-bottom"><span class="text-secondary">Asistencia de referencia hace 7 días</span><strong><?= e(number_format((float) ($dailyFactors['asistencia_hace_7_dias'] ?? 0), 2)) ?>%</strong></div>
+                        <div class="d-flex justify-content-between py-2 border-bottom"><span class="text-secondary">Promedio reciente de 7 días</span><strong><?= e(number_format($avg7, 2)) ?>%</strong></div>
+                        <div class="d-flex justify-content-between py-2 border-bottom"><span class="text-secondary">Promedio de 30 días</span><strong><?= e(number_format($avg30, 2)) ?>%</strong></div>
+                        <div class="d-flex justify-content-between py-2 border-bottom"><span class="text-secondary">Tardanza media reciente</span><strong><?= e(number_format((float) ($dailyFactors['tardanza_media_7'] ?? 0), 2)) ?>%</strong></div>
+                        <div class="mt-3 small"><strong>Lectura de tendencia:</strong> <?= e($trendText) ?>.</div>
+                        <div class="small text-secondary mt-2">Estos valores describen el contexto de entrada del modelo. No deben interpretarse como causas individuales de la predicción.</div>
+                    <?php endif; ?>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-7">
+            <div class="card shadow-sm h-100">
+                <div class="card-header py-3 px-4 d-flex justify-content-between align-items-start gap-3">
+                    <div>
+                        <h2 class="h6 fw-bold mb-1"><i class="fa-solid fa-clock-rotate-left me-2"></i>Seguimiento de pronósticos</h2>
+                        <div class="small text-secondary">Compara predicciones guardadas con la asistencia real cuando la jornada ya terminó.</div>
+                    </div>
+                    <span class="badge bg-primary-subtle text-primary-emphasis"><?= e((int) ($predictionSummary['guardados'] ?? 0)) ?> guardados</span>
+                </div>
+                <div class="card-body p-0">
+                    <div class="row g-0 border-bottom">
+                        <div class="col-4 p-3 text-center border-end">
+                            <div class="small text-secondary">Evaluados</div>
+                            <div class="fw-bold fs-5"><?= e((int) ($predictionSummary['evaluados'] ?? 0)) ?></div>
+                        </div>
+                        <div class="col-4 p-3 text-center border-end">
+                            <div class="small text-secondary">Pendientes</div>
+                            <div class="fw-bold fs-5"><?= e((int) ($predictionSummary['pendientes'] ?? 0)) ?></div>
+                        </div>
+                        <div class="col-4 p-3 text-center">
+                            <div class="small text-secondary">Error real medio</div>
+                            <div class="fw-bold fs-5"><?= ($predictionSummary['error_medio_pp'] ?? null) === null ? '—' : e(number_format((float) $predictionSummary['error_medio_pp'], 2)) . ' pp' ?></div>
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table app-table align-middle mb-0">
+                            <thead>
+                            <tr><th>Fecha</th><th>Predicción</th><th>Real</th><th>Error</th><th>Estado</th></tr>
+                            </thead>
+                            <tbody>
+                            <?php if (!$predictionHistory): ?>
+                                <tr><td colspan="5" class="text-center text-secondary py-5">Todavía no hay predicciones guardadas.</td></tr>
+                            <?php endif; ?>
+                            <?php foreach ($predictionHistory as $row): ?>
+                                <?php
+                                $comparisonState = (string) ($row['estado_comparacion'] ?? 'FUTURO');
+                                $badgeClass = $comparisonState === 'EVALUADO'
+                                    ? 'bg-success-subtle text-success-emphasis'
+                                    : ($comparisonState === 'EN_CURSO' ? 'bg-info-subtle text-info-emphasis' : 'bg-warning-subtle text-warning-emphasis');
+                                $stateLabel = match ($comparisonState) {
+                                    'EVALUADO' => 'Evaluado',
+                                    'EN_CURSO' => 'En curso',
+                                    'SIN_DATOS' => 'Sin datos',
+                                    default => 'Pendiente',
+                                };
+                                ?>
+                                <tr>
+                                    <td><strong><?= e(date('d/m/Y', strtotime((string) ($row['fecha'] ?? 'now')))) ?></strong></td>
+                                    <td><?= e(number_format((float) ($row['prediccion'] ?? 0), 2)) ?>%</td>
+                                    <td><?= ($row['real'] ?? null) === null ? '—' : e(number_format((float) $row['real'], 2)) . '%' ?></td>
+                                    <td><?= ($row['error_absoluto_pp'] ?? null) === null ? '—' : e(number_format((float) $row['error_absoluto_pp'], 2)) . ' pp' ?></td>
+                                    <td><span class="badge <?= e($badgeClass) ?>"><?= e($stateLabel) ?></span></td>
+                                </tr>
+                            <?php endforeach; ?>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
