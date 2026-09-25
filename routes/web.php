@@ -10,6 +10,7 @@ use App\Controllers\IncidenciaController;
 use App\Controllers\ReporteController;
 use App\Controllers\AuditoriaController;
 use App\Controllers\AiController;
+use App\Controllers\AssistantController;
 
 $router->get('login', [AuthController::class, 'showLogin']);
 $router->post('login', [AuthController::class, 'login']);
@@ -17,6 +18,7 @@ $router->post('logout', [AuthController::class, 'logout']);
 
 $router->get('dashboard', [DashboardController::class, 'index']);
 $router->get('ai', [AiController::class, 'index']);
+$router->post('assistant/query', [AssistantController::class, 'query']);
 
 $router->get('areas', [AreaController::class, 'index']);
 $router->get('areas/nuevo', [AreaController::class, 'create']);

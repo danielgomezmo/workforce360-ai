@@ -1,0 +1,7 @@
+cd C:\xampp\htdocs\Workforce360AI
+git status
+git diff
+git add .
+git status
+git commit -m "Fase 7 - Integración de Workforce AI y asistente inteligente"
+git push origin main

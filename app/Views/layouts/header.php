@@ -31,6 +31,7 @@ $roleLabel = $isCollaboratorPanel ? 'Mi Perfil' : (Auth::hasRole('ADMINISTRADOR'
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="<?= e(asset('css/app.css')) ?>">
+    <link rel="stylesheet" href="<?= e(asset('css/assistant.css')) ?>">
 </head>
 <body class="app-body <?= $isCollaboratorPanel ? 'role-collaborator' : 'role-management' ?>">
 <div class="layout-root">
